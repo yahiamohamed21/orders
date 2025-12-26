@@ -1,4 +1,4 @@
-// app/api/targets/route.js
+// app/api/user-stats/[user]/route.ts
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -24,10 +24,9 @@ function ensureTargetsFile() {
   }
 }
 
-// ملاحظة: لأن هذا الملف .js، لا يوجد TypeScript.
-// نخليها آمنة بدون error?.message
-function getErrorMessage(error) {
+function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
+
   try {
     return typeof error === "string" ? error : JSON.stringify(error);
   } catch {
@@ -35,45 +34,22 @@ function getErrorMessage(error) {
   }
 }
 
-export async function GET() {
+export async function GET(
+  _req: Request,
+  { params }: { params: { user: string } }
+) {
   try {
     ensureTargetsFile();
+
     const raw = fs.readFileSync(FILE_PATH, "utf8");
     const data = JSON.parse(raw);
-    return NextResponse.json({ ok: true, targets: data });
-  } catch (error) {
+
+    const user = params.user;
+    const userTargets = data?.[user] ?? null;
+
+    return NextResponse.json({ ok: true, user, targets: userTargets });
+  } catch (error: unknown) {
     console.error("❌ Error reading targets:", error);
-    return NextResponse.json(
-      { ok: false, error: getErrorMessage(error) },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(req) {
-  try {
-    ensureTargetsFile();
-    const body = await req.json();
-    const { userName, target } = body || {};
-
-    if (!userName || typeof target !== "number") {
-      return NextResponse.json(
-        { ok: false, error: "userName و target مطلوبان" },
-        { status: 400 }
-      );
-    }
-
-    const raw = fs.readFileSync(FILE_PATH, "utf8");
-    const data = JSON.parse(raw);
-
-    if (!data[userName]) data[userName] = {};
-    data[userName].target = target;
-
-    fs.writeFileSync(FILE_PATH, JSON.stringify(data, null, 2), "utf8");
-
-    return NextResponse.json({ ok: true, targets: data });
-  } catch (error) {
-    console.error("❌ Error saving target:", error);
     return NextResponse.json(
       { ok: false, error: getErrorMessage(error) },
       { status: 500 }
