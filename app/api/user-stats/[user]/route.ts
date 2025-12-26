@@ -24,8 +24,15 @@ function ensureTargetsFile() {
   }
 }
 
+// ملاحظة: لأن هذا الملف .js، لا يوجد TypeScript.
+// نخليها آمنة بدون error?.message
 function getErrorMessage(error) {
-  return error instanceof Error ? error.message : String(error ?? "Unknown error");
+  if (error instanceof Error) return error.message;
+  try {
+    return typeof error === "string" ? error : JSON.stringify(error);
+  } catch {
+    return String(error ?? "Unknown error");
+  }
 }
 
 export async function GET() {
