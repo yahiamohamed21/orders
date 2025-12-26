@@ -24,6 +24,10 @@ function ensureTargetsFile() {
   }
 }
 
+function getErrorMessage(error) {
+  return error instanceof Error ? error.message : String(error ?? "Unknown error");
+}
+
 export async function GET() {
   try {
     ensureTargetsFile();
@@ -33,7 +37,7 @@ export async function GET() {
   } catch (error) {
     console.error("❌ Error reading targets:", error);
     return NextResponse.json(
-      { ok: false, error: String(error?.message || error) },
+      { ok: false, error: getErrorMessage(error) },
       { status: 500 }
     );
   }
@@ -43,7 +47,7 @@ export async function POST(req) {
   try {
     ensureTargetsFile();
     const body = await req.json();
-    const { userName, target } = body;
+    const { userName, target } = body || {};
 
     if (!userName || typeof target !== "number") {
       return NextResponse.json(
@@ -64,7 +68,7 @@ export async function POST(req) {
   } catch (error) {
     console.error("❌ Error saving target:", error);
     return NextResponse.json(
-      { ok: false, error: String(error?.message || error) },
+      { ok: false, error: getErrorMessage(error) },
       { status: 500 }
     );
   }
