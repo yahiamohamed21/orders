@@ -8,6 +8,7 @@ import { useLang } from "../providers";
 const translations = {
   ar: {
     appName: "نظام إدارة الأوردرات",
+    beta: "نسخة تجريبية", // ✅ تمت الإضافة
     langBtn: "EN",
     light: "فاتح",
     dark: "غامق",
@@ -104,7 +105,7 @@ const translations = {
     adminRole: "Administrator",
     logout: "Logout",
   },
-};
+} as const;
 
 type SectionKey =
   | "dashboard"
@@ -112,13 +113,13 @@ type SectionKey =
   | "users"
   | "products"
   | "reports"
-  | "costs"  
+  | "costs"
   | "settings";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const { theme, setTheme } = useTheme();
   const { lang, toggleLang } = useLang();
-  const t = translations[lang];
+  const t = translations[lang as keyof typeof translations];
   const pathname = usePathname();
   const router = useRouter();
 
@@ -133,7 +134,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       ? "products"
       : pathname.startsWith("/admin/reports")
       ? "reports"
-      : pathname.startsWith("/admin/costs") // جديد
+      : pathname.startsWith("/admin/costs")
       ? "costs"
       : "settings";
 
