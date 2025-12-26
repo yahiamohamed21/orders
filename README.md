@@ -1,36 +1,222 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📦 Orders Management System
 
-## Getting Started
+نظام كامل لإدارة الأوردرات موجه للّوجستيات والمبيعات، مع دعم 3 مستخدمين + أدمن + سوبر أدمن، وتصدير مباشر إلى Excel Sheets، بالإضافة إلى تارجيت شهري، تقارير، وإدارة منتجات.
 
-First, run the development server:
+مبني باستخدام:
 
-```bash
+Next.js 14 (App Router)
+
+TypeScript
+
+SweetAlert2
+
+next-themes (Light/Dark)
+
+Multi-language (AR / EN)
+
+ExcelJS لكتابة ملفات Excel
+
+Middleware للحماية وإدارة الجلسات
+
+🚀 المميزات
+🔐 نظام تسجيل دخول متكامل
+
+سوبر أدمن (Super Admin)
+
+أدمن (Admin)
+
+3 مستخدمين (Users)
+
+تسجيل دخول آمن عبر Cookies + LocalStorage
+
+Middleware يمنع الوصول للصفحات بدون صلاحية
+
+📤 تسجيل أوردرات وإرسالها مباشرة إلى Excel
+
+كل يوزر له صفحة Dashboard يسجل منها الأوردرات
+
+كل أوردر يُضاف إلى:
+
+/data/orders.xlsx
+
+
+دعم الأعمدة الكاملة من رقم البوليصة، نوع البضاعة، بيانات المستلم… إلخ
+
+دعم CITY → AREA عبر ملف Excel خارجي
+
+🎯 نظام Targets (أهداف مبيعات)
+
+لكل يوزر Target يحدده الأدمن
+
+يظهر Progress Bar في صفحة اليوزر
+
+رسائل تحفيزية حسب التقدم
+
+🧑‍💻 إدارة كاملة من لوحة الأدمن
+
+إضافة / تعديل / حذف Users
+
+تحديد الدور (role)
+
+تحديد Target شهري لكل يوزر
+
+إدارة المنتجات (Products)
+
+تقارير (Reports)
+
+إعدادات النظام (Settings)
+
+🌙 Light / Dark Theme + لغتين AR / EN
+
+theme switcher
+
+اللغة محفوظة تلقائيًا
+
+الاتجاه يتغير تلقائيًا حسب اللغة
+
+🎨 صفحة Login احترافية
+
+تصميم عصري زجاجي (Glassmorphism)
+
+خلفيات متدرجة
+
+Responsive بالكامل
+
+📁 هيكل المشروع
+app/
+ ├─ login/
+ │   └─ page.tsx
+ ├─ user/
+ │   ├─ page.tsx
+ │   └─ layout.tsx
+ ├─ admin/
+ │   ├─ page.tsx
+ │   ├─ layout.tsx
+ │   ├─ users/
+ │   ├─ orders/
+ │   ├─ products/
+ │   ├─ reports/
+ │   └─ settings/
+ ├─ api/
+ │   ├─ auth/
+ │   │   ├─ login/route.ts
+ │   │   └─ logout/route.ts
+ │   ├─ orders/route.ts
+ │   ├─ targets/route.ts
+ │   └─ user-stats/[username]/route.ts
+data/
+ ├─ orders.xlsx
+ ├─ address.xlsx
+ └─ city-areas.ts  (يتم توليده تلقائيًا)
+scripts/
+ └─ generateCityAreas.ts
+
+🔧 تشغيل المشروع محليًا
+1️⃣ تثبيت الحزم
+npm install
+
+2️⃣ توليد CITY → AREA من ملف Excel
+
+ضع ملف:
+
+data/address.xlsx
+
+
+ثم شغّل:
+
+npm run gen:city-areas
+
+
+سيُنشئ الملف:
+
+app/user/city-areas.ts
+
+3️⃣ تشغيل المشروع
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+الموقع يعمل على:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+http://localhost:3000
 
-## Learn More
+🔑 بيانات تسجيل الدخول الافتراضية
+Super Admin:
+Username	Password
+superadmin	123456
 
-To learn more about Next.js, take a look at the following resources:
+Admin:
+Username	Password
+admin1	123456
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Users:
+Username	Password
+user1	123456
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+user2	123456
 
-## Deploy on Vercel
+user3	123456
+📤 موقع ملف الأوردرات
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+كل أوردر جديد يُحفظ تلقائيًا في:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+data/orders.xlsx
+
+
+ويتم إنشاء الملف تلقائيًا لو غير موجود.
+
+⚙️ إعداد التارجيت من لوحة الأدمن
+
+من صفحة:
+
+/admin/users
+
+
+يمكن للأدمن:
+
+تعديل بيانات المستخدم
+
+تحديد Target
+
+حذف المستخدم
+
+إضافة مستخدم جديد
+
+🧪 اختبار تسجيل أوردر
+
+من صفحة اليوزر /user:
+
+املأ بيانات الأوردر
+
+اختر المدينة → تظهر المناطق المتوافقة
+
+اضغط "إرسال الأوردر"
+
+يظهر إشعار SweetAlert2
+
+الأوردر يظهر في Excel مباشرة
+
+⚠️ ملاحظات مهمة
+
+مشروع Next.js لا يكتب الملفات في الإنتاج (Vercel/Docker)
+يجب نشر المشروع على خادم (Node server) مع صلاحيات الكتابة على الملفات.
+
+تأكد من وجود مجلد:
+
+/data
+
+
+وصلاحيات الكتابة مفعّلة.
+
+📘 مستقبل المشروع (Features مقترحة)
+
+Dashboard Analytics Charts
+
+فلترة الأوردرات
+
+نظام Notifications
+
+تقرير PDF لكل أوردر
+
+رفع ملفات للمنتجات (صور)
+
+نظام Permissions أعمق
