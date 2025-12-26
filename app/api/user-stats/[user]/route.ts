@@ -1,4 +1,5 @@
 // app/api/user-stats/[user]/route.ts
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -10,9 +11,7 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const FILE_PATH = path.join(DATA_DIR, "targets.json");
 
 function ensureTargetsFile() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
   if (!fs.existsSync(FILE_PATH)) {
     const initial = {
@@ -26,7 +25,6 @@ function ensureTargetsFile() {
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
-
   try {
     return typeof error === "string" ? error : JSON.stringify(error);
   } catch {
@@ -34,17 +32,19 @@ function getErrorMessage(error: unknown): string {
   }
 }
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { user: string } }
-) {
+type RouteContext = { params: unknown };
+
+export async function GET(_req: NextRequest, context: RouteContext) {
   try {
     ensureTargetsFile();
+
+    // Next 16 قد يرسل params كـ Promise أو كـ object حسب التولز/البيئة
+    const p = await Promise.resolve(context.params as any);
+    const user = String(p?.user ?? "");
 
     const raw = fs.readFileSync(FILE_PATH, "utf8");
     const data = JSON.parse(raw);
 
-    const user = params.user;
     const userTargets = data?.[user] ?? null;
 
     return NextResponse.json({ ok: true, user, targets: userTargets });
